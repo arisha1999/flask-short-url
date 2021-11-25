@@ -45,32 +45,12 @@ export default {
   },
   methods: {
     addNew() {
-      const path = 'http://localhost:5000/';
+      const path = 'https://flask-short-url-be.herokuapp.com/';
       const orig = this.originalUrl;
       this.axios
-        .post(path, { original: orig })
+        .post(path, { originalUrl: orig })
         .then((res) => {
           this.shortUrl = res.data.short_url;
-          this.showResult = true;
-        })
-        .catch((error) => {
-          this.showMessage = true;
-          this.message = error;
-        });
-    },
-    addUrl() {
-      const path = 'http://localhost:5000/';
-      this.axios({
-        url: path,
-        method: 'post',
-        data: JSON.stringify({ originalUrl: this.originalUrl }),
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => {
-          this.shortUrl = res;
           this.showResult = true;
         })
         .catch((error) => {

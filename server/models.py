@@ -1,5 +1,5 @@
 from app import db
-from hashids import Hashids
+import os
 
 
 class ShortUrl(db.Model):
@@ -20,9 +20,4 @@ class ShortUrl(db.Model):
 
     def __repr__(self):
         return '<id {}>'.format(self.id)
-
-    def generate_short_url(self, salt):
-        hashids = Hashids(min_length=4, salt=salt)
-        short_url = hashids.encode(self.id)
-        return short_url
 

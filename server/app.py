@@ -3,6 +3,7 @@ import json
 from flask import Flask, request, redirect, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from hashids import Hashids
 
 # instantiate the app
 app = Flask(__name__)
@@ -18,14 +19,15 @@ from models import *
 @app.route('/', methods=['POST'])
 def add_url():
     response_object = {'status': 'success'}
-    original_url = json.loads(request.data)['original']
+    original_url = json.loads(request.data)['originalUrl']
     try:
         link = ShortUrl.query.filter_by(original_url=original_url).first()
         if link is None:
             short_url_ = ShortUrl(original_url=original_url)
             db.session.add(short_url_)
             db.session.commit()
-            short_url = short_url_.generate_short_url(salt=app.config['SECRET_KEY'])
+            hashids = Hashids(min_length=4, salt=os.environ.get('SECRET_KEY'))
+            short_url = hashids.encode(short_url_.id)
             short_url_.short_url = short_url
             db.session.commit()
         else:
@@ -48,5 +50,4 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    db.create_all()
     app.run()
